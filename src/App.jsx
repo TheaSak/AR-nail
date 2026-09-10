@@ -7,7 +7,7 @@ export default function App() {
   const [nailColor, setNailColor] = useState('#ff0055');
   const [extractedImageName, setExtractedImageName] = useState('');
   const [isModelReady, setIsModelReady] = useState(false);
-  const nailSubImagesRef = useRef([]);
+  const nailImageRef = useRef(null);
 
   useEffect(() => {
     let cameraInstance = null;
@@ -32,10 +32,12 @@ export default function App() {
       });
 
       handsInstance.onResults((results) => {
-        // Dynamically match canvas internal size to video stream size
-        if (canvasElement.width !== videoElement.videoWidth || canvasElement.height !== videoElement.videoHeight) {
-          canvasElement.width = videoElement.videoWidth || 640;
-          canvasElement.height = videoElement.videoHeight || 480;
+        // Dynamically sync canvas internal resolution with the real-time video stream dimensions on mobile & desktop
+        if (videoElement.videoWidth && videoElement.videoHeight) {
+          if (canvasElement.width !== videoElement.videoWidth || canvasElement.height !== videoElement.videoHeight) {
+            canvasElement.width = videoElement.videoWidth;
+            canvasElement.height = videoElement.videoHeight;
+          }
         }
 
         canvasCtx.save();
@@ -43,6 +45,7 @@ export default function App() {
 
         if (results.multiHandLandmarks) {
           for (const landmarks of results.multiHandLandmarks) {
+            // Pair each fingertip with its adjacent joint to calculate angle and nail bed position
             const fingerPairs = [
               [4, 3],   // Thumb
               [8, 7],   // Index
@@ -51,7 +54,7 @@ export default function App() {
               [20, 19]  // Pinky
             ];
 
-            fingerPairs.forEach(([tipId, jointId], index) => {
+            fingerPairs.forEach(([tipId, jointId]) => {
               const tip = landmarks[tipId];
               const joint = landmarks[jointId];
 
@@ -60,30 +63,31 @@ export default function App() {
               const jointX = joint.x * canvasElement.width;
               const jointY = joint.y * canvasElement.height;
 
+              // Calculate finger orientation angle
               const dx = tipX - jointX;
               const dy = tipY - jointY;
               const angle = Math.atan2(dy, dx);
 
+              // Shift slightly closer to the fingertip (upward)
               const nailX = tipX - dx * 0.15;
               const nailY = tipY - dy * 0.15;
 
-              const radiusX = 10;
-              const radiusY = 14;
+              const radiusX = 10; // Realistic nail width
+              const radiusY = 14; // Realistic nail length
 
               canvasCtx.save();
               canvasCtx.translate(nailX, nailY);
-              canvasCtx.rotate(angle - Math.PI / 2);
+              canvasCtx.rotate(angle - Math.PI / 2); // Align rotation with the finger angle
 
               canvasCtx.beginPath();
               canvasCtx.ellipse(0, 0, radiusX, radiusY, 0, 0, 2 * Math.PI);
               canvasCtx.closePath();
               canvasCtx.clip();
 
-              const subImages = nailSubImagesRef.current;
-              if (subImages && subImages.length === 5) {
-                const subImg = subImages[index];
+              if (nailImageRef.current) {
+                // Map the Pinterest design inside the realistic nail ellipse
                 canvasCtx.drawImage(
-                  subImg,
+                  nailImageRef.current,
                   -radiusX,
                   -radiusY,
                   radiusX * 2,
@@ -102,7 +106,7 @@ export default function App() {
         canvasCtx.restore();
       });
 
-      // Request ideal mobile-friendly resolution constraints
+      // Use flexible constraints so mobile cameras adapt correctly in portrait mode
       cameraInstance = new window.Camera(videoElement, {
         onFrame: async () => {
           if (videoElement) {
@@ -110,7 +114,7 @@ export default function App() {
           }
         },
         width: { ideal: 1280 },
-        height: { ideal: 720 }
+        height: { ideal: 720 },
       });
 
       cameraInstance
@@ -137,32 +141,12 @@ export default function App() {
     const img = new Image();
     img.src = URL.createObjectURL(file);
     img.onload = () => {
-      const sliceWidth = img.width / 5;
-      const subImages = [];
-
-      for (let i = 0; i < 5; i++) {
-        const subCanvas = document.createElement('canvas');
-        subCanvas.width = sliceWidth;
-        subCanvas.height = img.height;
-        const subCtx = subCanvas.getContext('2d');
-        
-        subCtx.drawImage(
-          img,
-          i * sliceWidth, 0, sliceWidth, img.height,
-          0, 0, sliceWidth, img.height
-        );
-
-        const subImg = new Image();
-        subImg.src = subCanvas.toDataURL();
-        subImages.push(subImg);
-      }
-
-      nailSubImagesRef.current = subImages;
+      nailImageRef.current = img;
     };
   };
 
   const handleResetDesign = () => {
-    nailSubImagesRef.current = [];
+    nailImageRef.current = null;
     setExtractedImageName('');
   };
 
@@ -170,7 +154,7 @@ export default function App() {
     <div className="app-container">
       <header>
         <h1>AI Nail Style Try-On Studio</h1>
-        <p>Upload a multi-design Pinterest sheet to automatically map a unique style to each finger.</p>
+        <p>Upload any Pinterest design to project its exact pattern onto your nails live.</p>
       </header>
 
       <div className="camera-viewport">
@@ -189,7 +173,7 @@ export default function App() {
               value={nailColor}
               onChange={(e) => {
                 setNailColor(e.target.value);
-                nailSubImagesRef.current = [];
+                nailImageRef.current = null;
                 setExtractedImageName('');
               }}
             />
@@ -199,7 +183,7 @@ export default function App() {
 
         <div className="control-group">
           <label htmlFor="pinterestUpload" className="upload-btn">
-            Upload Multi-Design Pinterest Image
+            Upload Pinterest Design
           </label>
           <input
             id="pinterestUpload"
