@@ -1,0 +1,201 @@
+/* ══════════════════════════════════════════
+   ClawCheck Page
+   ══════════════════════════════════════════ */
+
+.clawcheck-page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+/* ── Page header ── */
+.clawcheck-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  animation: fadeDown 0.7s ease both;
+}
+
+.clawcheck-header::before {
+  content: '✦  NAIL HEALTH GUIDE  ✦';
+  font-family: 'Inter', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.clawcheck-header h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 600;
+  background: linear-gradient(135deg, #3d2530 0%, #a85c6e 50%, #c9a96e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.clawcheck-header p {
+  color: var(--text-light);
+  font-size: 0.95rem;
+  font-weight: 300;
+  max-width: 500px;
+}
+
+.clawcheck-header::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin-top: 0.2rem;
+}
+
+/* ── Grid ── */
+.clawcheck-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.4rem;
+  width: 100%;
+  animation: fadeUp 0.8s 0.15s ease both;
+}
+
+/* ── Card ── */
+.condition-card {
+  display: flex;
+  flex-direction: column;
+  background: rgba(253, 246, 240, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(201, 169, 110, 0.28);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(168, 92, 110, 0.09);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  text-align: left;
+  padding: 0;
+  /* Reset button defaults */
+  cursor: none;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+}
+
+.condition-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 32px rgba(168, 92, 110, 0.18);
+  border-color: rgba(201, 169, 110, 0.5);
+}
+
+.condition-card--open {
+  border-color: var(--mauve);
+  box-shadow: 0 8px 28px rgba(168, 92, 110, 0.22), 0 0 0 2px rgba(201, 145, 156, 0.15);
+}
+
+/* ── Card image ── */
+.card-image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.condition-card:hover .card-image {
+  transform: scale(1.05);
+}
+
+.card-image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 40%, rgba(61, 37, 48, 0.35) 100%);
+}
+
+/* ── Card body ── */
+.card-body {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem 1.1rem 0.9rem;
+}
+
+.card-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  line-height: 1.35;
+  margin: 0;
+  flex: 1;
+}
+
+.card-caret {
+  font-size: 0.7rem;
+  color: var(--mauve);
+  flex-shrink: 0;
+  margin-top: 3px;
+  transition: transform 0.2s ease;
+}
+
+.condition-card--open .card-caret {
+  color: var(--deep-rose);
+}
+
+/* ── Expanded description ── */
+.card-description {
+  padding: 0 1.1rem 1.1rem;
+  border-top: 1px solid rgba(201, 169, 110, 0.2);
+  margin-top: 0;
+  animation: expandIn 0.25s ease both;
+}
+
+.card-description p {
+  font-size: 0.83rem;
+  line-height: 1.65;
+  color: var(--text-mid);
+  margin: 0.75rem 0 0;
+}
+
+@keyframes expandIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Disclaimer ── */
+.clawcheck-disclaimer {
+  font-size: 0.78rem;
+  color: var(--text-light);
+  text-align: center;
+  padding: 0.9rem 1.5rem;
+  background: rgba(253, 246, 240, 0.6);
+  border: 1px solid rgba(201, 169, 110, 0.2);
+  border-radius: 50px;
+  max-width: 600px;
+  letter-spacing: 0.01em;
+}
+
+/* ── Animations (reuse from index.css) ── */
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,69 @@
+[
+    {
+        "id": "placeholder_id_1",
+        "name": "Acral lentiginous melanoma (Melanoma under nail)",
+        "description": "If a fingernail or toenail has a new or changing dark streak, it's time to see a dermatologist for a skin cancer check. That dark streak could be melanoma, the most serious type of skin cancer. Not every dark streak is a melanoma, but it's always good to have a dermatologist examine one. Caught early and treated, that may be the only treatment you need. Allowed to grow, treatment becomes more difficult.",
+        "image_link": "https://images.ctfassets.net/1ny4yoiyrqia/3FSMfMPPl4mtnESyG37XfV/a1cffb406c211724d6be66670b9623f9/melanoma-under-nails.jpg"
+    },
+    {
+        "id": "placeholder_id_2",
+        "name": "Onycholysis (Fingernail lifting up)",
+        "description": "If a nail starts to lift up so that it's no longer completely attached, you'll likely see white discoloration. When a nail lifts up, the cause is often: a fungal infection, psoriasis, injury from an aggressive manicure, or injury from cleaning under your nails with a sharp object. A dermatologist should examine any nail that's lifting up. You may need treatment to clear an infection or get tips that help the new nail grow out normally.",
+        "image_link": "https://images.ctfassets.net/1ny4yoiyrqia/2FcBJgF7ItvmrSAtbEypdN/959d9837680fdd91ce25d34a526df335/fingernail-lifting-up.jpg"
+    },
+    {
+        "id": "placeholder_id_3",
+        "name": "Paronychia (Infection around fingernail)",
+        "description": "If you have redness and swelling around a nail, you may have an infection. When diagnosed early, you can often treat an infection with soaks and antibiotics. If an open sore forms, you'll need more extensive treatment.",
+        "image_link": "https://images.ctfassets.net/1ny4yoiyrqia/6RPazZl5MvzAkJG7fgdDW8/aa0a6acafff3a435bb6b78c15fc466c0/infection-around-fingernail.jpg"
+    },
+    {
+        "id": "placeholder_id_4",
+        "name": "Paronychia (Infection under nail)",
+        "description": "When bacteria cause a nail infection, the nail can turn greenish black. Without treatment, a nail infection tends to worsen. Treatment can get rid of your pain and tenderness and help clear the infection.",
+        "image_link": "https://images.ctfassets.net/1ny4yoiyrqia/9p3OdXorA3RkGvtO0im1E/0154e40e903ff3ab958ce0983feeb647/infection-under-fingernail.jpg"
+    },
+    {
+        "id": "placeholder_id_5",
+        "name": "Pitting (Fingernail with pits)",
+        "description": "If you have dents in your nails that look like they were made by an icepick, this could be a sign that you have a disease that affects your entire body. People who have pits in their nails may have psoriasis, atopic dermatitis, or alopecia areata. Seeing a board-certified dermatologist for a diagnosis is important to help you feel more comfortable and prevent the disease from worsening.",
+        "image_link": "https://images.ctfassets.net/1ny4yoiyrqia/EYZMm8xT0d55ifN5liGmN/3271134efc9948235a9d3c22012f6dab/fingernail-with-pitting.jpg"
+    },
+    {
+        "id": "placeholder_id_6",
+        "name": "Yellow nail syndrome",
+        "description": "Wearing red nail polish without a base coat or smoking can turn your nails yellow. If your nails turn yellow, thicken, and seem to stop growing, it could be a sign of something going on inside your body. Lung disease and rheumatoid arthritis can cause yellow nails. You may also have a serious nail infection, which requires treatment.",
+        "image_link": "https://images.ctfassets.net/1ny4yoiyrqia/2wDYGLilqkAqTGnAOReGUw/7b9209224ed6db26f449a273bba5e2ef/yellow-nails.jpg"
+    },
+    {
+        "id": "placeholder_id_7",
+        "name": "Beau lines (Deep groove in nail)",
+        "description": "Lines that run the length of a nail are common and usually nothing to worry about. If you see deep grooves that run the width of your nail, it means that something slowed or stopped your nails from growing for a while. When a nail completely stops growing for a while, you may see a gap or missing nail area (onychomadesis). A fever, injury, chemotherapy, or major stress can cause this. Once you find and get rid of the cause, nails often start growing normally.",
+        "image_link": "https://images.ctfassets.net/1ny4yoiyrqia/7KLr8FEsaIZbyjAThLOgnD/7f4111ab63a5ed5218ab8b9142c45b45/deep-groove-in-nail.jpg"
+    },
+    {
+        "id": "placeholder_id_8",
+        "name": "Onychogryphosis (Thick, overgrown / Ram's horn nails)",
+        "description": "This happens when the nails thicken and overgrow. Some people get Ram's horns because the condition runs in the family. If you have a disease, such as psoriasis, ichthyosis, or circulation problems, you may also develop Ram's horn nails. Cutting and treating these nails requires help from a podiatrist or dermatologist.",
+        "image_link": "https://images.ctfassets.net/1ny4yoiyrqia/4tjwPye2yaRsawFq3RqVA3/3d1f51c47a1c454fee17325d28fed131/thick-overgrown-nails.jpg"
+    },
+    {
+        "id": "placeholder_id_9",
+        "name": "Koilonychia (Spoon-shaped nails)",
+        "description": "If you have thin fingernails that dip down in the middle and look like spoons, you may not be getting enough iron. People develop an iron deficiency for many reasons, including lack of proper nutrition, a health problem with their stomach or intestines, sensitivity to gluten (celiac disease), or high altitude. Getting a proper diagnosis and treatment can help you feel better.",
+        "image_link": "https://images.ctfassets.net/1ny4yoiyrqia/2GfmAtz7acmRnDpdw3HwNk/cf615f328bc466b8563edffdbd588d4c/spoon-shaped-nails.jpg"
+    },
+    {
+        "id": "placeholder_id_10",
+        "name": "Onychotillomania (Washboard nails)",
+        "description": "If you have grooves and ridges in the center of your thumb, you may have developed a habit of picking at or pushing back the cuticles on your thumbnails. Many people are unaware that they do this. A dermatologist may be able to help you break the habit, allowing healthy nails to grow out.",
+        "image_link": "https://images.ctfassets.net/1ny4yoiyrqia/2UI3HgtIOpSfFvGmX1Az9R/3d5aaa111023c63004602f4f43a676f3/washboard-nail.jpg"
+    },
+    {
+        "id": "placeholder_id_11",
+        "name": "Clubbing (Clubbing causes nails to curve down)",
+        "description": "The curving can begin so gradually that many people are unaware it's happening. As the nails continue to curve downward, fingertips often swell and the nails start to feel spongy when pressed on. Curved nails can be a harmless trait running in the family, or a sign that you have a disease in the lungs, heart, liver, or stomach/intestine.",
+        "image_link": "https://images.ctfassets.net/1ny4yoiyrqia/43sY5Ak7tk4rFOKCFaVMY/ff6bbfef607f3abeddb5e400fd5718c2/clubbing-curved-nails.jpg"
+    }
+    
+]

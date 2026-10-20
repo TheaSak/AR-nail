@@ -1,111 +1,116 @@
+/* ── Design tokens ── */
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  /* Palette */
+  --cream:       #fdf6f0;
+  --blush:       #f5e0da;
+  --rose:        #e8bfb8;
+  --mauve:       #c9919c;
+  --deep-rose:   #a85c6e;
+  --gold:        #c9a96e;
+  --gold-light:  #e8d5b0;
+  --warm-white:  #fffaf7;
+  --text-dark:   #3d2530;
+  --text-mid:    #7a5260;
+  --text-light:  #b08090;
+  --glass-bg:    rgba(253, 246, 240, 0.55);
+  --glass-border:rgba(201, 169, 110, 0.25);
+  --shadow-soft: 0 8px 32px rgba(168, 92, 110, 0.12);
+  --shadow-card: 0 4px 24px rgba(168, 92, 110, 0.10);
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  /* Typography */
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans:  'Inter', system-ui, sans-serif;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-dark);
+  background: var(--cream);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+/* ── Global reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  cursor: none !important;
 }
 
 body {
   margin: 0;
+  min-height: 100vh;
+  /* Static gradient — no background-attachment:fixed (causes full repaint on every mousemove) */
+  background: linear-gradient(160deg, #fdf6f0 0%, #faeae4 40%, #f7e4dc 100%);
+  cursor: none !important;
+  overflow-x: hidden;
 }
 
+/* Fixed background layer lives on its own compositor layer, never repainted by mouse */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(232,191,184,0.45) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 90%, rgba(201,169,110,0.20) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 60% 40%, rgba(245,224,218,0.35) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Ambient blob decorations (isolated div rendered in App.jsx, not pseudo-elements) ── */
+/* Blobs are in .blob elements so they get their own GPU layer and don't repaint on mouse move */
+.blob {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(70px);
+  opacity: 0.4;
+  will-change: transform;   /* promotes to own compositor layer */
+}
+.blob-rose {
+  width: 520px; height: 520px;
+  background: radial-gradient(circle, #e8bfb8 0%, transparent 70%);
+  top: -140px; left: -120px;
+  animation: floatBlob 18s ease-in-out infinite alternate;
+}
+.blob-gold {
+  width: 420px; height: 420px;
+  background: radial-gradient(circle, #c9a96e 0%, transparent 70%);
+  bottom: -100px; right: -100px;
+  animation: floatBlob 22s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes floatBlob {
+  0%   { transform: translate3d(0,0,0) scale(1); }
+  100% { transform: translate3d(40px,30px,0) scale(1.08); }
+}
+
+/* ── Root container ── */
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
+  width: 100%;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
+/* ── Headings ── */
+h1, h2, h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  color: var(--text-dark);
   margin: 0;
+  line-height: 1.2;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
+h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 600; }
+h2 { font-size: clamp(1.2rem, 3vw, 1.6rem); font-weight: 400; }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
-}
+p { margin: 0; color: var(--text-mid); }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--blush); }
+::-webkit-scrollbar-thumb { background: var(--mauve); border-radius: 3px; }
