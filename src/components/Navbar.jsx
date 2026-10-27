@@ -36,7 +36,7 @@ export default function Navbar() {
             </defs>
           </svg>
         </div>
-        <span className="brand-name">ClawsOn</span>
+        <span className="brand-name">PrepToGo</span>
       </NavLink>
 
       {/* ── Nav links ── */}

@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import '../App.css';
+import { INITIAL_CLOSET } from '../data/initialCloset';
+import { WEATHER_DATA } from '../data/weatherData';
+import {
+  generateOutfitWithGemini,
+  normalizeCategory
+} from '../services/geminiStylist';
 
 /**
  * Helper function to draw the custom nail shape path on the canvas.
@@ -54,116 +60,6 @@ function drawNailShape(ctx, shape, radiusX, radiusY) {
 
   ctx.closePath();
 }
-
-/** Pre-populated stylish sample items for ClawsFit digital closet */
-const INITIAL_CLOSET = [
-  {
-    id: 'item-1',
-    name: 'Ivory Silk Camisole',
-    category: 'Tops',
-    color: '#fdf6f0',
-    colorName: 'Ivory Cream',
-    image: 'https://images.unsplash.com/photo-1598554747436-c9293d6a588f?w=500&auto=format&fit=crop&q=80',
-    breathable: true,
-    warmth: 'light'
-  },
-  {
-    id: 'item-2',
-    name: 'Tailored Rose Trousers',
-    category: 'Bottoms',
-    color: '#c9919c',
-    colorName: 'Dusty Rose',
-    image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=500&auto=format&fit=crop&q=80',
-    breathable: true,
-    warmth: 'medium'
-  },
-  {
-    id: 'item-3',
-    name: 'Gilded Strappy Stilettos',
-    category: 'Shoes',
-    color: '#c9a96e',
-    colorName: 'Champagne Gold',
-    image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&auto=format&fit=crop&q=80',
-    breathable: true,
-    warmth: 'light'
-  },
-  {
-    id: 'item-4',
-    name: 'Cashmere Knit Cardigan',
-    category: 'Tops',
-    color: '#e8bfb8',
-    colorName: 'Blush Pink',
-    image: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=500&auto=format&fit=crop&q=80',
-    breathable: false,
-    warmth: 'warm'
-  },
-  {
-    id: 'item-5',
-    name: 'Pleated Mauve Midi Skirt',
-    category: 'Bottoms',
-    color: '#a85c6e',
-    colorName: 'Deep Mauve',
-    image: 'https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=500&auto=format&fit=crop&q=80',
-    breathable: true,
-    warmth: 'medium'
-  },
-  {
-    id: 'item-6',
-    name: 'Classic Pearl White Sneakers',
-    category: 'Shoes',
-    color: '#ffffff',
-    colorName: 'Pearl White',
-    image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&auto=format&fit=crop&q=80',
-    breathable: true,
-    warmth: 'medium'
-  }
-];
-
-/** Weather configurations with conditions and stylist guidelines */
-const WEATHER_DATA = {
-  hot: {
-    key: 'hot',
-    name: 'Hot & Sunny',
-    temp: '33°C (91°F)',
-    tempValue: 33,
-    icon: '☀️',
-    summary: 'High UV index, solar heat, humid air',
-    humidity: '46%',
-    wind: '10 km/h',
-    badge: 'Heatwave Alert',
-    fabrics: 'Opt for lightweight, breathable natural fabrics such as organic linen, raw silk, and airy cotton to maximize natural ventilation.',
-    cautions: 'Avoid heavy synthetic fabrics and dark/black clothing that absorb solar heat and elevate body temperature.',
-    reminder: "Don't forget sunscreen, a hat, and deodorant!"
-  },
-  rainy: {
-    key: 'rainy',
-    name: 'Rainy & Overcast',
-    temp: '22°C (72°F)',
-    tempValue: 22,
-    icon: '🌧️',
-    summary: 'Scattered downpours, wet sidewalks, overcast sky',
-    humidity: '88%',
-    wind: '18 km/h',
-    badge: 'Wet Weather Advisory',
-    fabrics: 'Choose water-resistant outerwear, quick-drying performance fabrics, and treated leather footwear to withstand moisture.',
-    cautions: 'Avoid delicate suede shoes and long trailing hemlines that can absorb road puddle splash and street dirt.',
-    reminder: 'Bring an umbrella or raincoat!'
-  },
-  cold: {
-    key: 'cold',
-    name: 'Chilly & Crisp',
-    temp: '14°C (57°F)',
-    tempValue: 14,
-    icon: '❄️',
-    summary: 'Crisp autumn breeze, low temperature, biting wind',
-    humidity: '55%',
-    wind: '22 km/h',
-    badge: 'Cool Temperature Advisory',
-    fabrics: 'Embrace smart warm layering: thermal base layers, chunky cashmere/wool knits, topped with a tailored coat.',
-    cautions: 'Avoid single thin cotton garments that leave you shivering in sudden wind gusts.',
-    reminder: 'Bundle up with a cozy knit scarf and keep warm insulated footwear ready!'
-  }
-};
 
 export default function ClawTry({ initialTab = 'nailar' }) {
   // Navigation active tab: 'nailar' | 'clawsfit'
@@ -315,7 +211,7 @@ export default function ClawTry({ initialTab = 'nailar' }) {
 
     return () => {
       if (cameraInstance) {
-        const stream = videoElement.srcObject;
+        const stream = videoElement?.srcObject;
         if (stream) {
           stream.getTracks().forEach((track) => track.stop());
         }
@@ -341,12 +237,71 @@ export default function ClawTry({ initialTab = 'nailar' }) {
   };
 
   /* ══════════════════════════════════════════════════════════════
-     CLAWSFIT WARDROBE & STYLIST STATE
+     CLAWSFIT WARDROBE & STYLIST STATE (DYNAMIC & PERSISTENT)
      ══════════════════════════════════════════════════════════════ */
-  const [closetItems, setClosetItems] = useState(INITIAL_CLOSET);
+  
+  // 1. Persistent Closet Items (Guaranteed Fresh with Ref & LocalStorage)
+  const [closetItems, setClosetItems] = useState(() => {
+    try {
+      const saved = localStorage.getItem('preptogo_closet_items') || localStorage.getItem('clawson_closet_items');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to parse closet items from localStorage:', err);
+    }
+    return INITIAL_CLOSET;
+  });
+
+  // Keep Ref synchronized to eliminate any stale closures in event handlers
+  const closetItemsRef = useRef(closetItems);
+  useEffect(() => {
+    closetItemsRef.current = closetItems;
+  }, [closetItems]);
+
+  // Sync state changes to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('preptogo_closet_items', JSON.stringify(closetItems));
+    } catch (err) {
+      console.warn('Failed to save closet items to localStorage:', err);
+    }
+  }, [closetItems]);
+
+  // 2. Persistent Generated Outfit State
+  const [generatedOutfit, setGeneratedOutfit] = useState(() => {
+    try {
+      const saved = localStorage.getItem('preptogo_generated_outfit') || localStorage.getItem('clawson_generated_outfit');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (err) {
+      console.warn('Failed to parse generated outfit from localStorage:', err);
+    }
+    return null;
+  });
+
+  // Keep generated outfit synced to localStorage
+  useEffect(() => {
+    try {
+      if (generatedOutfit) {
+        localStorage.setItem('preptogo_generated_outfit', JSON.stringify(generatedOutfit));
+      } else {
+        localStorage.removeItem('preptogo_generated_outfit');
+      }
+    } catch (err) {
+      console.warn('Failed to sync generated outfit with localStorage:', err);
+    }
+  }, [generatedOutfit]);
+
+  // Weather & Filtering State (5 weather conditions)
   const [closetCategoryFilter, setClosetCategoryFilter] = useState('All');
-  const [weatherCondition, setWeatherCondition] = useState('hot');
-  const [generatedOutfit, setGeneratedOutfit] = useState(null);
+  const [weatherCondition, setWeatherCondition] = useState('sunny');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [stylistNotice, setStylistNotice] = useState('');
 
   // Add Item Form State
   const [showAddForm, setShowAddForm] = useState(false);
@@ -354,12 +309,16 @@ export default function ClawTry({ initialTab = 'nailar' }) {
   const [newItemCategory, setNewItemCategory] = useState('Tops');
   const [newItemColor, setNewItemColor] = useState('#c9919c');
   const [newItemColorName, setNewItemColorName] = useState('Dusty Rose');
+  const [newItemDescription, setNewItemDescription] = useState('');
   const [newItemImage, setNewItemImage] = useState('');
+  const [newItemWarmth, setNewItemWarmth] = useState('medium');
+  const [newItemBreathable, setNewItemBreathable] = useState(true);
 
   // Fallback SVG image helper when network image fails
   const handleImgFallback = (e, item) => {
     e.target.onerror = null;
-    const catIcon = item.category === 'Tops' ? '👚' : item.category === 'Bottoms' ? '👖' : '👠';
+    const cat = normalizeCategory(item.category, item.name, item.description);
+    const catIcon = cat === 'Tops' ? '👚' : cat === 'Bottoms' ? '👖' : '👠';
     const svg = `
       <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
         <rect width="300" height="300" fill="#fbf5f2"/>
@@ -371,106 +330,167 @@ export default function ClawTry({ initialTab = 'nailar' }) {
     e.target.src = `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
   };
 
-  // Add clothing item
+  // Add clothing item: updates state, ref, and localStorage immediately
   const handleAddClosetItem = (e) => {
     e.preventDefault();
     if (!newItemName.trim()) return;
 
-    const fallbackImg = newItemCategory === 'Tops'
+    const normalizedCat = normalizeCategory(newItemCategory, newItemName, newItemDescription);
+
+    const fallbackImg = normalizedCat === 'Tops'
       ? 'https://images.unsplash.com/photo-1598554747436-c9293d6a588f?w=500&auto=format&fit=crop&q=80'
-      : newItemCategory === 'Bottoms'
+      : normalizedCat === 'Bottoms'
       ? 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=500&auto=format&fit=crop&q=80'
       : 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&auto=format&fit=crop&q=80';
 
     const newItem = {
       id: `item-${Date.now()}`,
       name: newItemName.trim(),
-      category: newItemCategory,
+      category: newItemCategory, // Preserves user's tag while normalizer resolves flexible semantics
       color: newItemColor,
       colorName: newItemColorName.trim() || 'Custom Hue',
       image: newItemImage.trim() || fallbackImg,
-      breathable: newItemCategory === 'Tops' ? true : false,
-      warmth: newItemCategory === 'Tops' ? 'medium' : 'light'
+      breathable: newItemBreathable,
+      warmth: newItemWarmth,
+      description: newItemDescription.trim() || `${newItemColorName} ${newItemCategory.toLowerCase()} piece added to personal wardrobe.`,
+      weatherSuitability: [weatherCondition]
     };
 
-    setClosetItems([newItem, ...closetItems]);
+    // Immediate synchronous update to ref and state
+    const updated = [newItem, ...closetItemsRef.current];
+    closetItemsRef.current = updated;
+    setClosetItems(updated);
+
+    try {
+      localStorage.setItem('preptogo_closet_items', JSON.stringify(updated));
+    } catch (err) {
+      console.warn('Failed to save closet items to localStorage:', err);
+    }
+
     setNewItemName('');
     setNewItemImage('');
+    setNewItemDescription('');
     setShowAddForm(false);
   };
 
-  // Local file upload for clothing photo
+  // Local file upload converted to DataURL so images persist across refresh in localStorage
   const handleClosetPhotoUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const url = URL.createObjectURL(file);
-    setNewItemImage(url);
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        setNewItemImage(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
-  // Delete clothing item
+  // Delete clothing item with persistent storage update
   const handleDeleteClosetItem = (id) => {
-    setClosetItems(closetItems.filter((item) => item.id !== id));
+    const updated = closetItemsRef.current.filter((item) => item.id !== id);
+    closetItemsRef.current = updated;
+    setClosetItems(updated);
+
+    try {
+      localStorage.setItem('preptogo_closet_items', JSON.stringify(updated));
+    } catch (err) {
+      console.warn('Failed to save closet items after deletion:', err);
+    }
+
     if (generatedOutfit && (generatedOutfit.top?.id === id || generatedOutfit.bottom?.id === id || generatedOutfit.shoes?.id === id)) {
       setGeneratedOutfit(null);
     }
   };
 
-  // Smart Outfit Generator with color harmony & weather synergy
-  const handleGenerateOutfit = () => {
-    const tops = closetItems.filter((i) => i.category === 'Tops');
-    const bottoms = closetItems.filter((i) => i.category === 'Bottoms');
-    const shoes = closetItems.filter((i) => i.category === 'Shoes');
-
-    if (!tops.length || !bottoms.length || !shoes.length) {
-      alert('Please ensure you have at least one Top, one Bottom, and one pair of Shoes in your closet to generate a complete outfit!');
-      return;
+  // Restore Default 21 Designer Pieces
+  const handleResetDefaultCloset = () => {
+    if (window.confirm('Reset your digital wardrobe back to the 21 curated designer pieces?')) {
+      closetItemsRef.current = INITIAL_CLOSET;
+      setClosetItems(INITIAL_CLOSET);
+      try {
+        localStorage.setItem('preptogo_closet_items', JSON.stringify(INITIAL_CLOSET));
+      } catch (err) {
+        console.warn('Failed to reset wardrobe items in localStorage:', err);
+      }
     }
-
-    // Weather-aware filtering
-    let candidateTops = tops;
-    if (weatherCondition === 'hot') {
-      const breathable = tops.filter((t) => t.warmth === 'light' || t.breathable);
-      if (breathable.length) candidateTops = breathable;
-    } else if (weatherCondition === 'cold') {
-      const warmTops = tops.filter((t) => t.warmth === 'warm' || !t.breathable);
-      if (warmTops.length) candidateTops = warmTops;
-    }
-
-    const selectedTop = candidateTops[Math.floor(Math.random() * candidateTops.length)];
-    const selectedBottom = bottoms[Math.floor(Math.random() * bottoms.length)];
-    const selectedShoes = shoes[Math.floor(Math.random() * shoes.length)];
-
-    // Color harmony calculation
-    const activeWeather = WEATHER_DATA[weatherCondition];
-    let harmonyScore = 96;
-    let harmonyDesc = 'Romantic Monochromatic Harmony';
-
-    if (weatherCondition === 'hot') {
-      harmonyScore = 98;
-      harmonyDesc = 'Breezy Pastel Glow & Lightweight Balance';
-    } else if (weatherCondition === 'rainy') {
-      harmonyScore = 95;
-      harmonyDesc = 'Protected Earthy Contrast with Water-Resistant Anchors';
-    } else if (weatherCondition === 'cold') {
-      harmonyScore = 97;
-      harmonyDesc = 'Luxe Layered Warmth with Gilded Accents';
-    }
-
-    setGeneratedOutfit({
-      top: selectedTop,
-      bottom: selectedBottom,
-      shoes: selectedShoes,
-      score: harmonyScore,
-      desc: harmonyDesc,
-      weather: activeWeather
-    });
   };
 
+  // Dynamically reads the freshest closet list right when the generate button is clicked
+  const handleGenerateOutfit = async () => {
+    const currentActiveWeather = WEATHER_DATA[weatherCondition] || WEATHER_DATA.sunny;
+
+    // 1. Retrieve the absolute latest closet state from localStorage or Ref (avoids stale closures)
+    let freshCloset = closetItemsRef.current;
+    try {
+      const saved = localStorage.getItem('preptogo_closet_items') || localStorage.getItem('clawson_closet_items');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          freshCloset = parsed;
+        }
+      }
+    } catch (err) {
+      console.warn('Error reading fresh closet items from localStorage:', err);
+    }
+
+    // Ensure state and ref reflect the dynamic fresh list
+    closetItemsRef.current = freshCloset;
+    setClosetItems(freshCloset);
+
+    try {
+      setIsGenerating(true);
+      setStylistNotice('');
+
+      // 2. Generate outfit with flexible category resolution and automatic fallback items
+      const result = await generateOutfitWithGemini({
+        closetItems: freshCloset,
+        weatherCondition,
+        weatherInfo: currentActiveWeather
+      });
+
+      setGeneratedOutfit(result.outfit);
+
+      if (result.notice) {
+        setStylistNotice(result.notice);
+      } else if (result.isAi) {
+        setStylistNotice(`✨ Styled live by Gemini AI (${result.outfit.modelUsed || 'Gemini 2.5'})`);
+      }
+    } catch (err) {
+      console.error('Outfit generation error:', err);
+      alert(err.message || 'Unable to generate outfit.');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  // Clear current generated outfit
+  const handleClearOutfit = () => {
+    setGeneratedOutfit(null);
+    setStylistNotice('');
+  };
+
+  // One-click apply recommended nail style to NailAR Studio
+  const handleApplyNailRecommendation = () => {
+    if (!generatedOutfit?.nailRecommendation) return;
+    const { hex, shape } = generatedOutfit.nailRecommendation;
+
+    if (hex) setNailColor(hex);
+    if (shape && ['oval', 'square', 'almond', 'stiletto'].includes(shape)) {
+      setNailShape(shape);
+    }
+    nailImageRef.current = null;
+    setExtractedImageName('');
+    setActiveTab('nailar');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Flexible Category Filter for Digital Closet Manager
   const filteredCloset = closetCategoryFilter === 'All'
     ? closetItems
-    : closetItems.filter((i) => i.category === closetCategoryFilter);
+    : closetItems.filter((i) => normalizeCategory(i.category, i.name, i.description) === closetCategoryFilter);
 
-  const currentWeather = WEATHER_DATA[weatherCondition];
+  const currentWeather = WEATHER_DATA[weatherCondition] || WEATHER_DATA.sunny;
 
   return (
     <div className="studio-page-wrapper">
@@ -628,9 +648,9 @@ export default function ClawTry({ initialTab = 'nailar' }) {
                 </div>
               </div>
 
-              {/* Weather testing toggles */}
+              {/* Weather testing toggles with all 5 conditions */}
               <div className="weather-toggle-section">
-                <label className="toggle-label">Switch Weather For Testing:</label>
+                <label className="toggle-label">Switch Weather Condition:</label>
                 <div className="weather-toggle-pills">
                   {Object.values(WEATHER_DATA).map((w) => (
                     <button
@@ -650,7 +670,7 @@ export default function ClawTry({ initialTab = 'nailar' }) {
             {/* 2. Weather-Aware Stylist Tips */}
             <div className="clawsfit-card stylist-tips-card">
               <div className="card-header">
-                <span className="card-badge gold">Stylist AI</span>
+                <span className="card-badge gold">Stylist Guidelines</span>
                 <h2>Weather-Aware Styling Advice</h2>
               </div>
 
@@ -682,30 +702,66 @@ export default function ClawTry({ initialTab = 'nailar' }) {
               </div>
             </div>
 
-            {/* 3. Smart Outfit Generator */}
+            {/* 3. Smart Outfit Generator Powered by Gemini AI */}
             <div className="clawsfit-card outfit-generator-card">
               <div className="card-header">
-                <span className="card-badge mauve">AI Harmony</span>
+                <span className="card-badge mauve">AI Stylist</span>
                 <h2>Smart Outfit Generator</h2>
               </div>
+
               <p className="generator-desc">
-                Algorithmically curates matching Tops, Bottoms, and Shoes engineered for color harmony and {currentWeather.name}.
+                AI analyzes color theory, silhouettes, and {currentWeather.name} suitability to engineer your optimal look.
               </p>
 
-              <button
-                type="button"
-                className="generate-fit-btn"
-                onClick={handleGenerateOutfit}
-              >
-                <span>✨</span> Generate Today's Fit
-              </button>
+              {/* Notice / Status Banner */}
+              {stylistNotice && (
+                <div className="stylist-notice-banner">
+                  <span className="notice-icon">💬</span>
+                  <div className="notice-content">{stylistNotice}</div>
+                </div>
+              )}
 
+              {/* Action Buttons Row */}
+              <div className="generator-actions-group">
+                <button
+                  type="button"
+                  className="generate-fit-btn"
+                  onClick={handleGenerateOutfit}
+                  disabled={isGenerating}
+                  style={{ opacity: isGenerating ? 0.75 : 1 }}
+                >
+                  {isGenerating ? (
+                    <>
+                      <span className="spinning-icon">✨</span>
+                      <span>Styling with Gemini...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>✨</span>
+                      <span>{generatedOutfit ? "Regenerate Today's Fit" : "Generate Today's Fit"}</span>
+                    </>
+                  )}
+                </button>
+
+                {generatedOutfit && (
+                  <button
+                    type="button"
+                    className="clear-fit-btn"
+                    onClick={handleClearOutfit}
+                    title="Clear current outfit"
+                  >
+                    ✕ Clear Fit
+                  </button>
+                )}
+              </div>
+
+              {/* Persistent Generated Outfit Showcase */}
               {generatedOutfit && (
                 <div className="generated-outfit-showcase">
                   <div className="harmony-score-banner">
                     <span className="score-star">★</span>
                     <span className="score-label">{generatedOutfit.score}% Color Harmony Match</span>
-                    <span className="score-desc">• {generatedOutfit.desc}</span>
+                    <span className="score-desc">• {generatedOutfit.styleTitle || generatedOutfit.desc}</span>
                   </div>
 
                   <div className="outfit-items-row">
@@ -717,7 +773,9 @@ export default function ClawTry({ initialTab = 'nailar' }) {
                           alt={generatedOutfit.top.name}
                           onError={(e) => handleImgFallback(e, generatedOutfit.top)}
                         />
-                        <span className="piece-category-tag">Top</span>
+                        <span className="piece-category-tag">
+                          {normalizeCategory(generatedOutfit.top.category, generatedOutfit.top.name)}
+                        </span>
                       </div>
                       <div className="piece-info">
                         <span className="piece-name">{generatedOutfit.top.name}</span>
@@ -736,7 +794,9 @@ export default function ClawTry({ initialTab = 'nailar' }) {
                           alt={generatedOutfit.bottom.name}
                           onError={(e) => handleImgFallback(e, generatedOutfit.bottom)}
                         />
-                        <span className="piece-category-tag">Bottom</span>
+                        <span className="piece-category-tag">
+                          {normalizeCategory(generatedOutfit.bottom.category, generatedOutfit.bottom.name)}
+                        </span>
                       </div>
                       <div className="piece-info">
                         <span className="piece-name">{generatedOutfit.bottom.name}</span>
@@ -755,7 +815,9 @@ export default function ClawTry({ initialTab = 'nailar' }) {
                           alt={generatedOutfit.shoes.name}
                           onError={(e) => handleImgFallback(e, generatedOutfit.shoes)}
                         />
-                        <span className="piece-category-tag">Shoes</span>
+                        <span className="piece-category-tag">
+                          {normalizeCategory(generatedOutfit.shoes.category, generatedOutfit.shoes.name)}
+                        </span>
                       </div>
                       <div className="piece-info">
                         <span className="piece-name">{generatedOutfit.shoes.name}</span>
@@ -766,12 +828,61 @@ export default function ClawTry({ initialTab = 'nailar' }) {
                       </div>
                     </div>
                   </div>
+
+                  {/* Stylist AI Detailed Rationale */}
+                  <div className="stylist-commentary-card">
+                    <div className="commentary-title-row">
+                      <span className="commentary-title">Stylist Analysis &amp; Color Rationale</span>
+                      <span className="ai-engine-tag">
+                        {generatedOutfit.source === 'gemini' ? 'Gemini AI Stylist' : 'Smart Stylist Harmony'}
+                      </span>
+                    </div>
+
+                    <p className="commentary-body">{generatedOutfit.stylingAdvice}</p>
+
+                    {generatedOutfit.weatherSuitability && (
+                      <div className="weather-verdict-row">
+                        <span>🌤️</span>
+                        <span>
+                          <strong>Weather Fitness:</strong> {generatedOutfit.weatherSuitability}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Dual-feature Nail Pairing Recommendation */}
+                    {generatedOutfit.nailRecommendation && (
+                      <div className="nail-pairing-box">
+                        <div className="nail-pairing-info">
+                          <span
+                            className="nail-swatch-circle"
+                            style={{ backgroundColor: generatedOutfit.nailRecommendation.hex }}
+                          />
+                          <div className="nail-pairing-meta">
+                            <span className="nail-pairing-label">Suggested Nail Pairing</span>
+                            <span className="nail-pairing-name">
+                              {generatedOutfit.nailRecommendation.shadeName} (
+                              {generatedOutfit.nailRecommendation.shape})
+                            </span>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          className="try-nail-ar-btn"
+                          onClick={handleApplyNailRecommendation}
+                          title="Try this suggested nail polish live in the AR camera"
+                        >
+                          💅 Try in NailAR
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
           </section>
 
-          {/* ── RIGHT COLUMN: Digital Closet Manager ── */}
+          {/* ── RIGHT COLUMN: Digital Closet Manager (With Dynamic LocalStorage) ── */}
           <section className="clawsfit-closet-section">
             <div className="clawsfit-card closet-manager-card">
               <div className="closet-header-row">
@@ -780,16 +891,29 @@ export default function ClawTry({ initialTab = 'nailar' }) {
                     <h2>Digital Closet Manager</h2>
                     <span className="closet-count-badge">{closetItems.length} items</span>
                   </div>
-                  <p className="closet-subtitle">Organize, preview, and manage your wardrobe collection.</p>
+                  <p className="closet-subtitle">
+                    Organize, preview, and manage your wardrobe collection. All edits save automatically.
+                  </p>
                 </div>
 
-                <button
-                  type="button"
-                  className="add-item-toggle-btn"
-                  onClick={() => setShowAddForm(!showAddForm)}
-                >
-                  {showAddForm ? '✕ Close Form' : '＋ Add Clothing'}
-                </button>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <button
+                    type="button"
+                    className="reset-wardrobe-btn"
+                    onClick={handleResetDefaultCloset}
+                    title="Reset to 21 curated designer items"
+                  >
+                    ↺ Reset Closet
+                  </button>
+
+                  <button
+                    type="button"
+                    className="add-item-toggle-btn"
+                    onClick={() => setShowAddForm(!showAddForm)}
+                  >
+                    {showAddForm ? '✕ Close Form' : '＋ Add Clothing'}
+                  </button>
+                </div>
               </div>
 
               {/* Add Clothing Item Form / Collapsible Drawer */}
@@ -810,16 +934,21 @@ export default function ClawTry({ initialTab = 'nailar' }) {
                     </div>
 
                     <div className="form-field">
-                      <label htmlFor="itemCategory">Category</label>
-                      <select
+                      <label htmlFor="itemCategory">Category / Type</label>
+                      <input
                         id="itemCategory"
+                        type="text"
+                        list="categorySuggestions"
+                        placeholder="e.g. Top, Sweater, Pants, Boots..."
                         value={newItemCategory}
                         onChange={(e) => setNewItemCategory(e.target.value)}
-                      >
-                        <option value="Tops">Tops</option>
-                        <option value="Bottoms">Bottoms</option>
-                        <option value="Shoes">Shoes</option>
-                      </select>
+                        required
+                      />
+                      <datalist id="categorySuggestions">
+                        <option value="Tops">Tops (Shirt, Sweater, Hoodie, Jacket)</option>
+                        <option value="Bottoms">Bottoms (Pants, Jeans, Skirt, Shorts)</option>
+                        <option value="Shoes">Shoes (Sneakers, Heels, Boots, Slides)</option>
+                      </datalist>
                     </div>
 
                     <div className="form-field">
@@ -841,7 +970,42 @@ export default function ClawTry({ initialTab = 'nailar' }) {
                     </div>
 
                     <div className="form-field">
-                      <label htmlFor="itemImage">Image URL or Local Upload</label>
+                      <label htmlFor="itemWarmth">Warmth &amp; Fabric</label>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <select
+                          id="itemWarmth"
+                          value={newItemWarmth}
+                          onChange={(e) => setNewItemWarmth(e.target.value)}
+                          style={{ flex: 1 }}
+                        >
+                          <option value="light">Light (Cool)</option>
+                          <option value="medium">Medium</option>
+                          <option value="warm">Warm (Insulated)</option>
+                        </select>
+                        <select
+                          value={newItemBreathable ? 'yes' : 'no'}
+                          onChange={(e) => setNewItemBreathable(e.target.value === 'yes')}
+                          style={{ flex: 1 }}
+                        >
+                          <option value="yes">Breathable</option>
+                          <option value="no">Insulating/Waterproof</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="form-field" style={{ gridColumn: '1 / -1' }}>
+                      <label htmlFor="itemDescription">Description &amp; Material Details</label>
+                      <input
+                        id="itemDescription"
+                        type="text"
+                        placeholder="e.g. 100% French linen shirt, breathable, great for sunny warm days"
+                        value={newItemDescription}
+                        onChange={(e) => setNewItemDescription(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="form-field" style={{ gridColumn: '1 / -1' }}>
+                      <label htmlFor="itemImage">Image URL or Local Upload (Persisted to Storage)</label>
                       <div className="image-input-group">
                         <input
                           id="itemImage"
@@ -904,7 +1068,9 @@ export default function ClawTry({ initialTab = 'nailar' }) {
                         loading="lazy"
                         onError={(e) => handleImgFallback(e, item)}
                       />
-                      <span className="clothing-category-badge">{item.category}</span>
+                      <span className="clothing-category-badge">
+                        {normalizeCategory(item.category, item.name, item.description)}
+                      </span>
                       <button
                         type="button"
                         className="clothing-delete-btn"
@@ -924,6 +1090,20 @@ export default function ClawTry({ initialTab = 'nailar' }) {
                         />
                         <span className="clothing-color-label">{item.colorName}</span>
                       </div>
+                      {item.description && (
+                        <p className="clothing-desc-text" title={item.description}>
+                          {item.description}
+                        </p>
+                      )}
+                      {item.weatherSuitability && item.weatherSuitability.length > 0 && (
+                        <div className="clothing-weather-tags">
+                          {item.weatherSuitability.map((tag) => (
+                            <span key={tag} className="weather-tag-pill">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

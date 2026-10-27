@@ -73,38 +73,6 @@ export default function LipstickCursor() {
     }
   }, []);
 
-  /* Animation loop for the trail canvas */
-  const animate = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.current = particles.current.filter((p) => p.alpha > 0.01);
-
-    for (const p of particles.current) {
-      ctx.globalAlpha = p.alpha;
-      ctx.fillStyle = p.color;
-
-      if (p.sparkle) {
-        drawStar(ctx, p.x, p.y, p.size);
-      } else {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * 0.6, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += 0.06;
-      p.alpha -= p.decay;
-      p.size *= 0.98;
-    }
-
-    ctx.globalAlpha = 1;
-    rafId.current = requestAnimationFrame(animate);
-  }, []);
-
   /* Resize canvas to fill viewport */
   const resize = useCallback(() => {
     const canvas = canvasRef.current;
@@ -117,14 +85,55 @@ export default function LipstickCursor() {
     resize();
     window.addEventListener('resize', resize);
     window.addEventListener('mousemove', onMouseMove);
+
+    const animate = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const remaining = [];
+
+      for (const p of particles.current) {
+        if (p.alpha <= 0.01) continue;
+
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+
+        if (p.sparkle) {
+          drawStar(ctx, p.x, p.y, p.size);
+        } else {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size * 0.6, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.06;
+        p.alpha -= p.decay;
+        p.size *= 0.98;
+
+        if (p.alpha > 0.01) {
+          remaining.push(p);
+        }
+      }
+
+      particles.current = remaining;
+      ctx.globalAlpha = 1;
+      rafId.current = requestAnimationFrame(animate);
+    };
+
     rafId.current = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', onMouseMove);
-      cancelAnimationFrame(rafId.current);
+      if (rafId.current) {
+        cancelAnimationFrame(rafId.current);
+      }
     };
-  }, [resize, onMouseMove, animate]);
+  }, [resize, onMouseMove]);
 
   return (
     <>

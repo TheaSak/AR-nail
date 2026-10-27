@@ -1,0 +1,265 @@
+/**
+ * ClawsFit Default Wardrobe Collection
+ * Pre-populated with 21 stylish, versatile pieces with rich descriptions,
+ * color signatures, warmth levels, breathability flags, and weather suitability tags.
+ */
+
+export const INITIAL_CLOSET = [
+  // ── TOPS ──
+  {
+    id: 'item-1',
+    name: 'Ivory Silk Camisole',
+    category: 'Tops',
+    color: '#fdf6f0',
+    colorName: 'Ivory Cream',
+    image: 'https://images.unsplash.com/photo-1598554747436-c9293d6a588f?w=500&auto=format&fit=crop&q=80',
+    breathable: true,
+    warmth: 'light',
+    weatherSuitability: ['sunny', 'hot'],
+    description: 'Ultra-lightweight 100% mulberry silk camisole with delicate straps; highly breathable, cooling, and ideal for hot sunny days.'
+  },
+  {
+    id: 'item-2',
+    name: 'Cashmere Knit Cardigan',
+    category: 'Tops',
+    color: '#e8bfb8',
+    colorName: 'Blush Pink',
+    image: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=500&auto=format&fit=crop&q=80',
+    breathable: false,
+    warmth: 'warm',
+    weatherSuitability: ['chilly', 'windy'],
+    description: 'Plush ribbed cashmere cardigan offering insulating warmth, tactile softness, and cozy layering against chilly breezes.'
+  },
+  {
+    id: 'item-3',
+    name: 'Breezy French Linen Shirt',
+    category: 'Tops',
+    color: '#ffffff',
+    colorName: 'Crisp White',
+    image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&auto=format&fit=crop&q=80',
+    breathable: true,
+    warmth: 'light',
+    weatherSuitability: ['sunny', 'hot', 'windy'],
+    description: 'Relaxed airy linen button-up with rolled cuffs; naturally moisture-wicking and effortlessly chic in sunny warmth.'
+  },
+  {
+    id: 'item-4',
+    name: 'Oatmeal Chunky Turtleneck',
+    category: 'Tops',
+    color: '#e2d7c5',
+    colorName: 'Oatmeal Beige',
+    image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=500&auto=format&fit=crop&q=80',
+    breathable: false,
+    warmth: 'warm',
+    weatherSuitability: ['chilly'],
+    description: 'Heavyweight lambswool-blend turtleneck sweater providing supreme thermal insulation against crisp winds and cold mornings.'
+  },
+  {
+    id: 'item-5',
+    name: 'Sage Water-Repellent Windbreaker',
+    category: 'Tops',
+    color: '#7a8b7b',
+    colorName: 'Sage Mist',
+    image: 'https://images.unsplash.com/photo-1544441893-675973e31985?w=500&auto=format&fit=crop&q=80',
+    breathable: true,
+    warmth: 'medium',
+    weatherSuitability: ['rainy', 'windy'],
+    description: 'Technical water-resistant shell jacket with storm-sealed zippers and wind-breaking hood; shields you during rain and gusts.'
+  },
+  {
+    id: 'item-6',
+    name: 'Emerald Satin Mock-Neck Blouse',
+    category: 'Tops',
+    color: '#1f4e3b',
+    colorName: 'Deep Emerald',
+    image: 'https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=500&auto=format&fit=crop&q=80',
+    breathable: true,
+    warmth: 'medium',
+    weatherSuitability: ['sunny', 'windy', 'chilly'],
+    description: 'Lustrous emerald satin top with an elegant draped mock neckline; structured and wind-deflecting with jewel-toned elegance.'
+  },
+  {
+    id: 'item-7',
+    name: 'Sky Blue Relaxed Poplin Shirt',
+    category: 'Tops',
+    color: '#a7c5eb',
+    colorName: 'Sky Blue',
+    image: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=500&auto=format&fit=crop&q=80',
+    breathable: true,
+    warmth: 'light',
+    weatherSuitability: ['sunny', 'hot', 'windy'],
+    description: 'Crisp, lightweight 100% cotton poplin shirt with a tailored boyfriend fit; keeps air circulating freely on bright days.'
+  },
+  {
+    id: 'item-8',
+    name: 'Midnight Trench Outerwear',
+    category: 'Tops',
+    color: '#1a1a1a',
+    colorName: 'Midnight Black',
+    image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500&auto=format&fit=crop&q=80',
+    breathable: false,
+    warmth: 'medium',
+    weatherSuitability: ['rainy', 'windy', 'chilly'],
+    description: 'Double-breasted tailored trench coat with a storm flap; repels drizzle and blocks turbulent wind while delivering sharp silhouette.'
+  },
+
+  // ── BOTTOMS ──
+  {
+    id: 'item-9',
+    name: 'Tailored Rose Trousers',
+    category: 'Bottoms',
+    color: '#c9919c',
+    colorName: 'Dusty Rose',
+    image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=500&auto=format&fit=crop&q=80',
+    breathable: true,
+    warmth: 'medium',
+    weatherSuitability: ['sunny', 'chilly', 'windy'],
+    description: 'High-waisted pleated wide-leg trousers in structured crepe fabric; combines flattering movement with versatile all-weather comfort.'
+  },
+  {
+    id: 'item-10',
+    name: 'Pleated Mauve Midi Skirt',
+    category: 'Bottoms',
+    color: '#a85c6e',
+    colorName: 'Deep Mauve',
+    image: 'https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=500&auto=format&fit=crop&q=80',
+    breathable: true,
+    warmth: 'medium',
+    weatherSuitability: ['sunny', 'hot'],
+    description: 'Flowing accordion-pleated midi skirt that glides gracefully; romantic, breathable, and paired effortlessly with light tops.'
+  },
+  {
+    id: 'item-11',
+    name: 'Vintage High-Rise Straight Jeans',
+    category: 'Bottoms',
+    color: '#4a6984',
+    colorName: 'Classic Denim',
+    image: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=500&auto=format&fit=crop&q=80',
+    breathable: true,
+    warmth: 'medium',
+    weatherSuitability: ['sunny', 'windy', 'chilly'],
+    description: 'Heavyweight organic cotton denim trousers with a timeless straight cut; rugged, wind-resistant, and versatile for city strolls.'
+  },
+  {
+    id: 'item-12',
+    name: 'Waterproof Utility Cargo Pants',
+    category: 'Bottoms',
+    color: '#3d4035',
+    colorName: 'Dark Olive',
+    image: 'https://images.unsplash.com/photo-1517445312882-bc9910d016b7?w=500&auto=format&fit=crop&q=80',
+    breathable: false,
+    warmth: 'medium',
+    weatherSuitability: ['rainy', 'windy'],
+    description: 'Water-repellent coated cargo trousers with cinchable ankle cuffs to prevent splash-backs from wet puddles and road spray.'
+  },
+  {
+    id: 'item-13',
+    name: 'Fleece-Lined Wool Slacks',
+    category: 'Bottoms',
+    color: '#2c2e35',
+    colorName: 'Charcoal Midnight',
+    image: 'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=500&auto=format&fit=crop&q=80',
+    breathable: false,
+    warmth: 'warm',
+    weatherSuitability: ['chilly'],
+    description: 'Tailored wool-blend trousers lined with plush microfleece; retains body heat and wards off frosty breezes with clean lines.'
+  },
+  {
+    id: 'item-14',
+    name: 'Airy Linen Culottes',
+    category: 'Bottoms',
+    color: '#e8dcce',
+    colorName: 'Desert Sand',
+    image: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=500&auto=format&fit=crop&q=80',
+    breathable: true,
+    warmth: 'light',
+    weatherSuitability: ['hot', 'sunny'],
+    description: 'Cropped wide-leg natural linen pants engineered for maximum airflow and instant heat dissipation during sweltering days.'
+  },
+  {
+    id: 'item-15',
+    name: 'Cabernet Faux-Leather A-Line Skirt',
+    category: 'Bottoms',
+    color: '#5e1927',
+    colorName: 'Rich Cabernet',
+    image: 'https://images.unsplash.com/photo-1551803091-e20673f15770?w=500&auto=format&fit=crop&q=80',
+    breathable: false,
+    warmth: 'medium',
+    weatherSuitability: ['windy', 'chilly', 'rainy'],
+    description: 'Structured vegan leather midi skirt; completely impermeable to wind gusts and light rain spray while making a high-fashion statement.'
+  },
+
+  // ── SHOES ──
+  {
+    id: 'item-16',
+    name: 'Gilded Strappy Stilettos',
+    category: 'Shoes',
+    color: '#c9a96e',
+    colorName: 'Champagne Gold',
+    image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&auto=format&fit=crop&q=80',
+    breathable: true,
+    warmth: 'light',
+    weatherSuitability: ['hot', 'sunny'],
+    description: 'Open-toe metallic champagne leather sandals with slender ankle straps; glamorous, airy, and stunning for balmy sunny evenings.'
+  },
+  {
+    id: 'item-17',
+    name: 'Classic Pearl White Sneakers',
+    category: 'Shoes',
+    color: '#ffffff',
+    colorName: 'Pearl White',
+    image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&auto=format&fit=crop&q=80',
+    breathable: true,
+    warmth: 'medium',
+    weatherSuitability: ['sunny', 'windy', 'chilly'],
+    description: 'Minimalist low-top leather sneakers with cushioned soles; versatile staple providing all-day comfort across moderate conditions.'
+  },
+  {
+    id: 'item-18',
+    name: 'Waterproof Lug-Sole Chelsea Boots',
+    category: 'Shoes',
+    color: '#1c1c1c',
+    colorName: 'Onyx Black',
+    image: 'https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=500&auto=format&fit=crop&q=80',
+    breathable: false,
+    warmth: 'warm',
+    weatherSuitability: ['rainy', 'chilly'],
+    description: 'Seamless vulcanized waterproof leather boots with deep rubber lug treads to grip wet sidewalks and puddle-laden walkways securely.'
+  },
+  {
+    id: 'item-19',
+    name: 'Camel Suede Ankle Booties',
+    category: 'Shoes',
+    color: '#a07248',
+    colorName: 'Caramel Suede',
+    image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&auto=format&fit=crop&q=80',
+    breathable: false,
+    warmth: 'warm',
+    weatherSuitability: ['chilly', 'windy'],
+    description: 'Insulated suede block-heel booties with padded footbeds; shields feet and ankles against crisp gusts with earthy warmth.'
+  },
+  {
+    id: 'item-20',
+    name: 'Minimalist Cognac Leather Slides',
+    category: 'Shoes',
+    color: '#8a4b27',
+    colorName: 'Cognac Amber',
+    image: 'https://images.unsplash.com/photo-1603487742131-4160ec999306?w=500&auto=format&fit=crop&q=80',
+    breathable: true,
+    warmth: 'light',
+    weatherSuitability: ['hot', 'sunny'],
+    description: 'Open-toe artisan leather flat slides with soft arch contouring; prevents overheating and delivers effortless warm-weather elegance.'
+  },
+  {
+    id: 'item-21',
+    name: 'All-Weather Platform Combat Boots',
+    category: 'Shoes',
+    color: '#382b27',
+    colorName: 'Espresso Brown',
+    image: 'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?w=500&auto=format&fit=crop&q=80',
+    breathable: false,
+    warmth: 'warm',
+    weatherSuitability: ['rainy', 'windy', 'chilly'],
+    description: 'Sturdy high-traction boots with reinforced storm-welting; anchors the outfit solidly against heavy crosswinds and wet terrain.'
+  }
+];
