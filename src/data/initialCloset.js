@@ -1,7 +1,8 @@
 /**
  * ClawsFit Default Wardrobe Collection
  * Pre-populated with 21 stylish, versatile pieces with rich descriptions,
- * color signatures, warmth levels, breathability flags, and weather suitability tags.
+ * color signatures, warmth levels, breathability flags, weather suitability tags,
+ * and gender targeting (male | female | unisex).
  */
 
 export const INITIAL_CLOSET = [
@@ -16,6 +17,7 @@ export const INITIAL_CLOSET = [
     breathable: true,
     warmth: 'light',
     weatherSuitability: ['sunny', 'hot'],
+    gender: 'female',
     description: 'Ultra-lightweight 100% mulberry silk camisole with delicate straps; highly breathable, cooling, and ideal for hot sunny days.'
   },
   {
@@ -28,6 +30,7 @@ export const INITIAL_CLOSET = [
     breathable: false,
     warmth: 'warm',
     weatherSuitability: ['chilly', 'windy'],
+    gender: 'unisex',
     description: 'Plush ribbed cashmere cardigan offering insulating warmth, tactile softness, and cozy layering against chilly breezes.'
   },
   {
@@ -40,6 +43,7 @@ export const INITIAL_CLOSET = [
     breathable: true,
     warmth: 'light',
     weatherSuitability: ['sunny', 'hot', 'windy'],
+    gender: 'unisex',
     description: 'Relaxed airy linen button-up with rolled cuffs; naturally moisture-wicking and effortlessly chic in sunny warmth.'
   },
   {
@@ -52,6 +56,7 @@ export const INITIAL_CLOSET = [
     breathable: false,
     warmth: 'warm',
     weatherSuitability: ['chilly'],
+    gender: 'unisex',
     description: 'Heavyweight lambswool-blend turtleneck sweater providing supreme thermal insulation against crisp winds and cold mornings.'
   },
   {
@@ -64,6 +69,7 @@ export const INITIAL_CLOSET = [
     breathable: true,
     warmth: 'medium',
     weatherSuitability: ['rainy', 'windy'],
+    gender: 'unisex',
     description: 'Technical water-resistant shell jacket with storm-sealed zippers and wind-breaking hood; shields you during rain and gusts.'
   },
   {
@@ -76,6 +82,7 @@ export const INITIAL_CLOSET = [
     breathable: true,
     warmth: 'medium',
     weatherSuitability: ['sunny', 'windy', 'chilly'],
+    gender: 'female',
     description: 'Lustrous emerald satin top with an elegant draped mock neckline; structured and wind-deflecting with jewel-toned elegance.'
   },
   {
@@ -88,6 +95,7 @@ export const INITIAL_CLOSET = [
     breathable: true,
     warmth: 'light',
     weatherSuitability: ['sunny', 'hot', 'windy'],
+    gender: 'male',
     description: 'Crisp, lightweight 100% cotton poplin shirt with a tailored boyfriend fit; keeps air circulating freely on bright days.'
   },
   {
@@ -100,6 +108,7 @@ export const INITIAL_CLOSET = [
     breathable: false,
     warmth: 'medium',
     weatherSuitability: ['rainy', 'windy', 'chilly'],
+    gender: 'unisex',
     description: 'Double-breasted tailored trench coat with a storm flap; repels drizzle and blocks turbulent wind while delivering sharp silhouette.'
   },
 
@@ -114,6 +123,7 @@ export const INITIAL_CLOSET = [
     breathable: true,
     warmth: 'medium',
     weatherSuitability: ['sunny', 'chilly', 'windy'],
+    gender: 'female',
     description: 'High-waisted pleated wide-leg trousers in structured crepe fabric; combines flattering movement with versatile all-weather comfort.'
   },
   {
@@ -126,6 +136,7 @@ export const INITIAL_CLOSET = [
     breathable: true,
     warmth: 'medium',
     weatherSuitability: ['sunny', 'hot'],
+    gender: 'female',
     description: 'Flowing accordion-pleated midi skirt that glides gracefully; romantic, breathable, and paired effortlessly with light tops.'
   },
   {
@@ -138,6 +149,7 @@ export const INITIAL_CLOSET = [
     breathable: true,
     warmth: 'medium',
     weatherSuitability: ['sunny', 'windy', 'chilly'],
+    gender: 'unisex',
     description: 'Heavyweight organic cotton denim trousers with a timeless straight cut; rugged, wind-resistant, and versatile for city strolls.'
   },
   {
@@ -150,6 +162,7 @@ export const INITIAL_CLOSET = [
     breathable: false,
     warmth: 'medium',
     weatherSuitability: ['rainy', 'windy'],
+    gender: 'male',
     description: 'Water-repellent coated cargo trousers with cinchable ankle cuffs to prevent splash-backs from wet puddles and road spray.'
   },
   {
@@ -162,6 +175,7 @@ export const INITIAL_CLOSET = [
     breathable: false,
     warmth: 'warm',
     weatherSuitability: ['chilly'],
+    gender: 'male',
     description: 'Tailored wool-blend trousers lined with plush microfleece; retains body heat and wards off frosty breezes with clean lines.'
   },
   {
@@ -174,6 +188,7 @@ export const INITIAL_CLOSET = [
     breathable: true,
     warmth: 'light',
     weatherSuitability: ['hot', 'sunny'],
+    gender: 'female',
     description: 'Cropped wide-leg natural linen pants engineered for maximum airflow and instant heat dissipation during sweltering days.'
   },
   {
@@ -186,6 +201,7 @@ export const INITIAL_CLOSET = [
     breathable: false,
     warmth: 'medium',
     weatherSuitability: ['windy', 'chilly', 'rainy'],
+    gender: 'female',
     description: 'Structured vegan leather midi skirt; completely impermeable to wind gusts and light rain spray while making a high-fashion statement.'
   },
 
@@ -200,6 +216,7 @@ export const INITIAL_CLOSET = [
     breathable: true,
     warmth: 'light',
     weatherSuitability: ['hot', 'sunny'],
+    gender: 'female',
     description: 'Open-toe metallic champagne leather sandals with slender ankle straps; glamorous, airy, and stunning for balmy sunny evenings.'
   },
   {
@@ -212,6 +229,7 @@ export const INITIAL_CLOSET = [
     breathable: true,
     warmth: 'medium',
     weatherSuitability: ['sunny', 'windy', 'chilly'],
+    gender: 'unisex',
     description: 'Minimalist low-top leather sneakers with cushioned soles; versatile staple providing all-day comfort across moderate conditions.'
   },
   {
@@ -224,6 +242,7 @@ export const INITIAL_CLOSET = [
     breathable: false,
     warmth: 'warm',
     weatherSuitability: ['rainy', 'chilly'],
+    gender: 'unisex',
     description: 'Seamless vulcanized waterproof leather boots with deep rubber lug treads to grip wet sidewalks and puddle-laden walkways securely.'
   },
   {
@@ -236,6 +255,7 @@ export const INITIAL_CLOSET = [
     breathable: false,
     warmth: 'warm',
     weatherSuitability: ['chilly', 'windy'],
+    gender: 'female',
     description: 'Insulated suede block-heel booties with padded footbeds; shields feet and ankles against crisp gusts with earthy warmth.'
   },
   {
@@ -248,6 +268,7 @@ export const INITIAL_CLOSET = [
     breathable: true,
     warmth: 'light',
     weatherSuitability: ['hot', 'sunny'],
+    gender: 'unisex',
     description: 'Open-toe artisan leather flat slides with soft arch contouring; prevents overheating and delivers effortless warm-weather elegance.'
   },
   {
@@ -260,6 +281,7 @@ export const INITIAL_CLOSET = [
     breathable: false,
     warmth: 'warm',
     weatherSuitability: ['rainy', 'windy', 'chilly'],
+    gender: 'unisex',
     description: 'Sturdy high-traction boots with reinforced storm-welting; anchors the outfit solidly against heavy crosswinds and wet terrain.'
   }
 ];

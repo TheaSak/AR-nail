@@ -301,6 +301,7 @@ export default function ClawTry({ initialTab = 'nailar' }) {
 
   // Weather & Filtering State (5 weather conditions)
   const [closetCategoryFilter, setClosetCategoryFilter] = useState('All');
+  const [genderFilter, setGenderFilter] = useState('unisex');
   const [weatherCondition, setWeatherCondition] = useState('sunny');
   const [isGenerating, setIsGenerating] = useState(false);
   const [stylistNotice, setStylistNotice] = useState('');
@@ -316,6 +317,7 @@ export default function ClawTry({ initialTab = 'nailar' }) {
   const [newItemWarmth, setNewItemWarmth] = useState('medium');
   const [newItemBreathable, setNewItemBreathable] = useState(true);
   const [newItemWeathers, setNewItemWeathers] = useState([]);
+  const [newItemGender, setNewItemGender] = useState('unisex');
 
   const toggleNewItemWeather = (w) => {
     setNewItemWeathers((prev) =>
@@ -373,7 +375,8 @@ export default function ClawTry({ initialTab = 'nailar' }) {
       breathable: newItemBreathable,
       warmth: newItemWarmth,
       description: newItemDescription.trim() || `${newItemColorName} ${newItemCategory.toLowerCase()} piece added to personal wardrobe.`,
-      weatherSuitability: resolvedSuitability
+      weatherSuitability: resolvedSuitability,
+      gender: newItemGender
     };
 
     // Immediate synchronous update to ref and state
@@ -391,6 +394,7 @@ export default function ClawTry({ initialTab = 'nailar' }) {
     setNewItemImage('');
     setNewItemDescription('');
     setNewItemWeathers([]);
+    setNewItemGender('unisex');
     setShowAddForm(false);
   };
 
@@ -459,13 +463,21 @@ export default function ClawTry({ initialTab = 'nailar' }) {
     closetItemsRef.current = freshCloset;
     setClosetItems(freshCloset);
 
+    // 2. Filter by active gender profile before passing to generator
+    const genderFilteredCloset = freshCloset.filter((item) => {
+      const g = (item.gender || 'unisex').toLowerCase();
+      if (genderFilter === 'male') return g === 'male' || g === 'unisex';
+      if (genderFilter === 'female') return g === 'female' || g === 'unisex';
+      return g === 'unisex'; // unisex filter
+    });
+
     try {
       setIsGenerating(true);
       setStylistNotice('');
 
-      // 2. Generate outfit with flexible category resolution and automatic fallback items
+      // 3. Generate outfit with flexible category resolution and automatic fallback items
       const result = await generateOutfitWithGemini({
-        closetItems: freshCloset,
+        closetItems: genderFilteredCloset.length > 0 ? genderFilteredCloset : freshCloset,
         weatherCondition,
         weatherInfo: currentActiveWeather
       });
@@ -506,10 +518,20 @@ export default function ClawTry({ initialTab = 'nailar' }) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Flexible Category Filter for Digital Closet Manager
-  const filteredCloset = closetCategoryFilter === 'All'
-    ? closetItems
-    : closetItems.filter((i) => normalizeCategory(i.category, i.name, i.description) === closetCategoryFilter);
+  // Helper: check if item matches the active gender profile
+  const itemMatchesGender = (item) => {
+    const g = (item.gender || 'unisex').toLowerCase();
+    if (genderFilter === 'male') return g === 'male' || g === 'unisex';
+    if (genderFilter === 'female') return g === 'female' || g === 'unisex';
+    return g === 'unisex'; // 'unisex' filter shows only shared items
+  };
+
+  // Flexible Category + Gender Filter for Digital Closet Manager
+  const filteredCloset = closetItems.filter((i) => {
+    const catMatch = closetCategoryFilter === 'All'
+      || normalizeCategory(i.category, i.name, i.description) === closetCategoryFilter;
+    return catMatch && itemMatchesGender(i);
+  });
 
   const currentWeather = WEATHER_DATA[weatherCondition] || WEATHER_DATA.sunny;
 
@@ -638,6 +660,26 @@ export default function ClawTry({ initialTab = 'nailar' }) {
           <h1>ClawsFit Wardrobe &amp; Stylist</h1>
           <p>Curate your personal digital closet and generate weather-tailored outfits balanced by color harmony.</p>
         </header>
+
+        {/* ── Gender Profile Toggle Bar ── */}
+        <div className="gender-filter-bar">
+          {[
+            { id: 'male', label: '👨 Men\'s', desc: 'Male + Unisex' },
+            { id: 'female', label: '👩 Women\'s', desc: 'Female + Unisex' },
+            { id: 'unisex', label: '✨ Unisex', desc: 'Shared Only' }
+          ].map((g) => (
+            <button
+              key={g.id}
+              type="button"
+              className={`gender-filter-btn ${genderFilter === g.id ? 'active' : ''}`}
+              onClick={() => setGenderFilter(g.id)}
+              title={g.desc}
+            >
+              <span className="gender-btn-label">{g.label}</span>
+              <span className="gender-btn-desc">{g.desc}</span>
+            </button>
+          ))}
+        </div>
 
         <div className="clawsfit-dashboard-grid">
           {/* ── LEFT COLUMN: Weather Hub, Stylist Tips & Outfit Generator ── */}
@@ -1014,6 +1056,31 @@ export default function ClawTry({ initialTab = 'nailar' }) {
                       </div>
                     </div>
 
+                    <div className="form-field">
+                      <label htmlFor="itemGender">Target Gender</label>
+                      <div className="gender-radio-group">
+                        {[
+                          { value: 'male', label: '👨 Male' },
+                          { value: 'female', label: '👩 Female' },
+                          { value: 'unisex', label: '✨ Both / Unisex' }
+                        ].map((opt) => (
+                          <label
+                            key={opt.value}
+                            className={`gender-radio-pill ${newItemGender === opt.value ? 'selected' : ''}`}
+                          >
+                            <input
+                              type="radio"
+                              name="itemGender"
+                              value={opt.value}
+                              checked={newItemGender === opt.value}
+                              onChange={(e) => setNewItemGender(e.target.value)}
+                            />
+                            {opt.label}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
                     <div className="form-field" style={{ gridColumn: '1 / -1' }}>
                       <label>Weather Suitability (Optional - auto-detected if unselected)</label>
                       <div className="form-weather-pills">
@@ -1132,6 +1199,12 @@ export default function ClawTry({ initialTab = 'nailar' }) {
                           style={{ backgroundColor: item.color }}
                         />
                         <span className="clothing-color-label">{item.colorName}</span>
+                        {item.gender && (
+                          <span className={`clothing-gender-badge gender-${item.gender}`}>
+                            {item.gender === 'male' ? '👨' : item.gender === 'female' ? '👩' : '✨'}
+                            {' '}{item.gender === 'unisex' ? 'Unisex' : item.gender === 'male' ? 'Men\'s' : 'Women\'s'}
+                          </span>
+                        )}
                       </div>
                       {item.description && (
                         <p className="clothing-desc-text" title={item.description}>
