@@ -60,6 +60,112 @@ export const isBottom = (item) => normalizeCategory(item?.category, item?.name, 
 export const isShoe = (item) => normalizeCategory(item?.category, item?.name, item?.description) === 'Shoes';
 
 /**
+ * Intelligently infers weather suitability tags from item properties,
+ * keywords in name/description, warmth level, and breathability.
+ */
+export function inferWeatherSuitability(item = {}) {
+  const name = (item.name || '').toLowerCase();
+  const desc = (item.description || '').toLowerCase();
+  const cat = (item.category || '').toLowerCase();
+  const text = `${name} ${desc} ${cat}`;
+
+  const warmth = item.warmth || 'medium';
+  const breathable = item.breathable !== false; // defaults to true if undefined
+
+  const matched = new Set();
+
+  // Keyword-based matching
+  const rainyKeywords = [
+    'rain', 'waterproof', 'water-repellent', 'water-resistant', 'repellent', 'resistant',
+    'shell', 'chelsea', 'boot', 'boots', 'trench', 'parka', 'cargo', 'nylon', 'rubber',
+    'puddle', 'storm', 'umbrella'
+  ];
+  const chillyKeywords = [
+    'chilly', 'cold', 'frost', 'sweater', 'cardigan', 'knit', 'knitwear', 'wool',
+    'cashmere', 'turtleneck', 'fleece', 'thermal', 'heavy', 'warm', 'coat', 'winter',
+    'autumn', 'insulat', 'slacks', 'jacket', 'parka'
+  ];
+  const windyKeywords = [
+    'wind', 'windbreaker', 'breeze', 'trench', 'leather', 'denim', 'cargo',
+    'jacket', 'parka', 'trouser', 'trousers', 'combat', 'structured', 'mock-neck',
+    'hoodie', 'gust', 'blazer'
+  ];
+  const hotKeywords = [
+    'hot', 'summer', 'heat', 'linen', 'silk', 'camisole', 'tank', 'crop',
+    'culotte', 'culottes', 'short', 'shorts', 'slide', 'slides', 'sandal', 'sandals',
+    'sleeveless', 'airy', 'ventil', 'cool'
+  ];
+  const sunnyKeywords = [
+    'sunny', 'sun', 'solar', 'light', 'linen', 'cotton', 'poplin', 'silk',
+    'shirt', 'blouse', 'dress', 'skirt', 'tee', 't-shirt', 'sneaker', 'sneakers',
+    'sandal', 'sandals', 'slides', 'mule', 'mules'
+  ];
+
+  if (rainyKeywords.some((k) => text.includes(k))) matched.add('rainy');
+  if (chillyKeywords.some((k) => text.includes(k))) matched.add('chilly');
+  if (windyKeywords.some((k) => text.includes(k))) matched.add('windy');
+  if (hotKeywords.some((k) => text.includes(k))) matched.add('hot');
+  if (sunnyKeywords.some((k) => text.includes(k))) matched.add('sunny');
+
+  // Warmth & Breathability logic
+  if (warmth === 'warm') {
+    matched.add('chilly');
+    matched.add('windy');
+    matched.delete('hot'); // Heavy warm items should not be marked hot
+  }
+
+  if (warmth === 'light') {
+    matched.add('hot');
+    matched.add('sunny');
+    matched.delete('chilly'); // Light items should not be marked chilly
+  }
+
+  if (breathable && warmth !== 'warm') {
+    matched.add('sunny');
+  }
+
+  if (!breathable && warmth !== 'light') {
+    matched.add('windy');
+  }
+
+  // Fallback defaults if nothing specific was inferred
+  if (matched.size === 0) {
+    if (warmth === 'warm') return ['chilly', 'windy'];
+    if (warmth === 'light') return ['hot', 'sunny'];
+    return ['sunny', 'windy'];
+  }
+
+  return Array.from(matched);
+}
+
+/**
+ * Resolves an item's real weather suitability tags, automatically repairing
+ * any items that were erroneously hardcoded to ['sunny'] during upload.
+ */
+export function resolveItemWeather(item = {}) {
+  if (!item) return ['sunny'];
+
+  const tags = Array.isArray(item.weatherSuitability) ? item.weatherSuitability : [];
+
+  // Check if item was affected by the "only sunny" bug:
+  // e.g. exactly 1 tag that is 'sunny', but it's a winter sweater, heavy knit, coat, boot, or warmth='warm'
+  const text = `${item.name || ''} ${item.description || ''} ${item.category || ''}`.toLowerCase();
+  const isErroneousSunny =
+    tags.length === 1 &&
+    tags[0] === 'sunny' &&
+    (item.warmth === 'warm' ||
+      /sweater|cardigan|coat|turtleneck|jacket|hoodie|wind|boot|fleece|wool|rain|waterproof|cargo|slacks|insulat|parka|combat/i.test(
+        text
+      ));
+
+  if (tags.length === 0 || isErroneousSunny) {
+    return inferWeatherSuitability(item);
+  }
+
+  return tags;
+}
+
+/**
  * Standard luxury fallback pieces used when a category is empty in user's wardrobe.
  */
 export const DEFAULT_FALLBACK_TOP = INITIAL_CLOSET.find(isTop) || {
@@ -156,10 +262,11 @@ export function generateSmartLocalOutfit({ closetItems, weatherCondition, weathe
 
   // Filter or score candidates by weather suitability
   const filterByWeather = (items) => {
-    // 1. Items with explicit weather tags
-    const tagged = items.filter(
-      (item) => item.weatherSuitability && item.weatherSuitability.includes(weatherCondition)
-    );
+    // 1. Items with resolved weather tags (auto-heals single 'sunny' tags for warm items)
+    const tagged = items.filter((item) => {
+      const weathers = resolveItemWeather(item);
+      return Array.isArray(weathers) && weathers.includes(weatherCondition);
+    });
     if (tagged.length > 0) return tagged;
 
     // 2. Heuristic based on warmth / breathability
@@ -280,6 +387,7 @@ export async function generateOutfitWithGemini({ closetItems, weatherCondition, 
     colorHex: item.color,
     warmth: item.warmth || 'medium',
     breathable: Boolean(item.breathable),
+    weatherSuitability: resolveItemWeather(item),
     description: item.description || ''
   }));
 

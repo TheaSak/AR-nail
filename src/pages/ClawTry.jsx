@@ -4,7 +4,9 @@ import { INITIAL_CLOSET } from '../data/initialCloset';
 import { WEATHER_DATA } from '../data/weatherData';
 import {
   generateOutfitWithGemini,
-  normalizeCategory
+  inferWeatherSuitability,
+  normalizeCategory,
+  resolveItemWeather
 } from '../services/geminiStylist';
 
 /**
@@ -313,6 +315,13 @@ export default function ClawTry({ initialTab = 'nailar' }) {
   const [newItemImage, setNewItemImage] = useState('');
   const [newItemWarmth, setNewItemWarmth] = useState('medium');
   const [newItemBreathable, setNewItemBreathable] = useState(true);
+  const [newItemWeathers, setNewItemWeathers] = useState([]);
+
+  const toggleNewItemWeather = (w) => {
+    setNewItemWeathers((prev) =>
+      prev.includes(w) ? prev.filter((item) => item !== w) : [...prev, w]
+    );
+  };
 
   // Fallback SVG image helper when network image fails
   const handleImgFallback = (e, item) => {
@@ -343,6 +352,17 @@ export default function ClawTry({ initialTab = 'nailar' }) {
       ? 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=500&auto=format&fit=crop&q=80'
       : 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&auto=format&fit=crop&q=80';
 
+    const resolvedSuitability =
+      newItemWeathers.length > 0
+        ? newItemWeathers
+        : inferWeatherSuitability({
+            name: newItemName.trim(),
+            category: newItemCategory,
+            description: newItemDescription.trim(),
+            warmth: newItemWarmth,
+            breathable: newItemBreathable
+          });
+
     const newItem = {
       id: `item-${Date.now()}`,
       name: newItemName.trim(),
@@ -353,7 +373,7 @@ export default function ClawTry({ initialTab = 'nailar' }) {
       breathable: newItemBreathable,
       warmth: newItemWarmth,
       description: newItemDescription.trim() || `${newItemColorName} ${newItemCategory.toLowerCase()} piece added to personal wardrobe.`,
-      weatherSuitability: [weatherCondition]
+      weatherSuitability: resolvedSuitability
     };
 
     // Immediate synchronous update to ref and state
@@ -370,6 +390,7 @@ export default function ClawTry({ initialTab = 'nailar' }) {
     setNewItemName('');
     setNewItemImage('');
     setNewItemDescription('');
+    setNewItemWeathers([]);
     setShowAddForm(false);
   };
 
@@ -994,6 +1015,28 @@ export default function ClawTry({ initialTab = 'nailar' }) {
                     </div>
 
                     <div className="form-field" style={{ gridColumn: '1 / -1' }}>
+                      <label>Weather Suitability (Optional - auto-detected if unselected)</label>
+                      <div className="form-weather-pills">
+                        {[
+                          { id: 'sunny', label: '☀️ Sunny' },
+                          { id: 'rainy', label: '🌧️ Rainy' },
+                          { id: 'chilly', label: '❄️ Chilly' },
+                          { id: 'hot', label: '🔥 Hot' },
+                          { id: 'windy', label: '💨 Windy' }
+                        ].map((w) => (
+                          <button
+                            key={w.id}
+                            type="button"
+                            className={`form-weather-pill-btn ${newItemWeathers.includes(w.id) ? 'selected' : ''}`}
+                            onClick={() => toggleNewItemWeather(w.id)}
+                          >
+                            {w.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="form-field" style={{ gridColumn: '1 / -1' }}>
                       <label htmlFor="itemDescription">Description &amp; Material Details</label>
                       <input
                         id="itemDescription"
@@ -1095,15 +1138,26 @@ export default function ClawTry({ initialTab = 'nailar' }) {
                           {item.description}
                         </p>
                       )}
-                      {item.weatherSuitability && item.weatherSuitability.length > 0 && (
-                        <div className="clothing-weather-tags">
-                          {item.weatherSuitability.map((tag) => (
-                            <span key={tag} className="weather-tag-pill">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+                      {(() => {
+                        const itemWeathers = resolveItemWeather(item);
+                        if (!itemWeathers || itemWeathers.length === 0) return null;
+                        const weatherIcons = {
+                          sunny: '☀️',
+                          rainy: '🌧️',
+                          chilly: '❄️',
+                          hot: '🔥',
+                          windy: '💨'
+                        };
+                        return (
+                          <div className="clothing-weather-tags">
+                            {itemWeathers.map((tag) => (
+                              <span key={tag} className={`weather-tag-pill weather-tag-${tag}`}>
+                                {weatherIcons[tag] || '🌤️'} {tag}
+                              </span>
+                            ))}
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
                 ))}

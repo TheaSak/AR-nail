@@ -1964,13 +1964,81 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 .weather-tag-pill {
-  font-size: 0.6rem;
-  padding: 0.1rem 0.4rem;
+  font-size: 0.65rem;
+  padding: 0.15rem 0.5rem;
   border-radius: 50px;
   background: rgba(201, 169, 110, 0.18);
   color: #7d591e;
   font-weight: 600;
   text-transform: capitalize;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  border: 1px solid transparent;
+}
+
+.weather-tag-pill.weather-tag-sunny {
+  background: rgba(245, 158, 11, 0.12);
+  color: #92400e;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.weather-tag-pill.weather-tag-rainy {
+  background: rgba(59, 130, 246, 0.12);
+  color: #1e40af;
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.weather-tag-pill.weather-tag-chilly {
+  background: rgba(99, 102, 241, 0.12);
+  color: #3730a3;
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.weather-tag-pill.weather-tag-hot {
+  background: rgba(239, 68, 68, 0.12);
+  color: #991b1b;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.weather-tag-pill.weather-tag-windy {
+  background: rgba(20, 184, 166, 0.12);
+  color: #115e59;
+  border-color: rgba(20, 184, 166, 0.3);
+}
+
+.form-weather-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.35rem;
+}
+
+.form-weather-pill-btn {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  border: 1px solid rgba(110, 54, 70, 0.22);
+  background: #ffffff;
+  color: #6e3646;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.form-weather-pill-btn:hover {
+  background: rgba(201, 145, 156, 0.12);
+  border-color: rgba(110, 54, 70, 0.4);
+}
+
+.form-weather-pill-btn.selected {
+  background: #6e3646;
+  color: #ffffff;
+  border-color: #6e3646;
+  box-shadow: 0 2px 6px rgba(110, 54, 70, 0.25);
 }
 
 .spinning-icon {
