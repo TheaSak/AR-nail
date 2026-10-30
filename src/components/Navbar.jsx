@@ -7,7 +7,7 @@ export default function Navbar() {
       {/* ── Brand / Logo ── */}
       <NavLink to="/" className="brand">
         <div className="brand-logo">
-          {/* Claw / paw SVG logo */}
+          {/* Claws / paw SVG logo */}
           <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
             {/* Palm */}
             <ellipse cx="16" cy="20" rx="8" ry="7" fill="url(#palmGrad)" />
@@ -41,8 +41,8 @@ export default function Navbar() {
 
       {/* ── Nav links ── */}
       <div className="nav-links">
-        <NavLink to="/"         end className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'}>ClawTry</NavLink>
-        <NavLink to="/clawcheck"    className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'}>ClawCheck</NavLink>
+        <NavLink to="/"         end className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'}>ClawsTry</NavLink>
+        <NavLink to="/clawscheck"    className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'}>ClawsCheck</NavLink>
         <NavLink to="/contact"      className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'}>Contact Us</NavLink>
       </div>
     </nav>

@@ -63,7 +63,7 @@ function drawNailShape(ctx, shape, radiusX, radiusY) {
   ctx.closePath();
 }
 
-export default function ClawTry({ initialTab = 'nailar' }) {
+export default function ClawsTry({ initialTab = 'nailar' }) {
   // Navigation active tab: 'nailar' | 'clawsfit'
   const [activeTab, setActiveTab] = useState(initialTab);
   const activeTabRef = useRef(activeTab);
@@ -1034,12 +1034,12 @@ export default function ClawTry({ initialTab = 'nailar' }) {
 
                     <div className="form-field">
                       <label htmlFor="itemWarmth">Warmth &amp; Fabric</label>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <div style={{ display: 'flex', gap: '0.5rem', minWidth: 0, overflow: 'hidden' }}>
                         <select
                           id="itemWarmth"
                           value={newItemWarmth}
                           onChange={(e) => setNewItemWarmth(e.target.value)}
-                          style={{ flex: 1 }}
+                          style={{ flex: 1, minWidth: 0 }}
                         >
                           <option value="light">Light (Cool)</option>
                           <option value="medium">Medium</option>
@@ -1048,7 +1048,7 @@ export default function ClawTry({ initialTab = 'nailar' }) {
                         <select
                           value={newItemBreathable ? 'yes' : 'no'}
                           onChange={(e) => setNewItemBreathable(e.target.value === 'yes')}
-                          style={{ flex: 1 }}
+                          style={{ flex: 1, minWidth: 0 }}
                         >
                           <option value="yes">Breathable</option>
                           <option value="no">Insulating/Waterproof</option>

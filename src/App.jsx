@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
-import ClawTry from './pages/ClawTry';
-import ClawCheck from './pages/ClawCheck';
+import ClawsTry from './pages/ClawsTry';
+import ClawsCheck from './pages/ClawsCheck';
 import ContactUs from './pages/ContactUs';
 
 export default function App() {
@@ -9,11 +9,11 @@ export default function App() {
     <Routes>
       <Route element={<Layout />}>
         {/* Main studio page with top-level tabs: NailAR Studio & ClawsFit Wardrobe */}
-        <Route path="/" element={<ClawTry />} />
-        <Route path="/clawsfit" element={<ClawTry initialTab="clawsfit" />} />
+        <Route path="/" element={<ClawsTry />} />
+        <Route path="/clawsfit" element={<ClawsTry initialTab="clawsfit" />} />
         
         {/* Dedicated routes for nail health & contact */}
-        <Route path="/clawcheck" element={<ClawCheck />} />
+        <Route path="/clawscheck" element={<ClawsCheck />} />
         <Route path="/contact" element={<ContactUs />} />
       </Route>
     </Routes>

@@ -1,8 +1,8 @@
 /* ══════════════════════════════════════════
-   ClawCheck Page
+   ClawsCheck Page
    ══════════════════════════════════════════ */
 
-.clawcheck-page {
+.clawscheck-page {
   max-width: 1080px;
   margin: 0 auto;
   padding: 3rem 1.5rem 5rem;
@@ -13,7 +13,7 @@
 }
 
 /* ── Page header ── */
-.clawcheck-header {
+.clawscheck-header {
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -22,7 +22,7 @@
   animation: fadeDown 0.7s ease both;
 }
 
-.clawcheck-header::before {
+.clawscheck-header::before {
   content: '✦  NAIL HEALTH GUIDE  ✦';
   font-family: 'Inter', sans-serif;
   font-size: 0.68rem;
@@ -32,7 +32,7 @@
   text-transform: uppercase;
 }
 
-.clawcheck-header h1 {
+.clawscheck-header h1 {
   font-family: 'Playfair Display', Georgia, serif;
   font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 600;
@@ -42,14 +42,14 @@
   background-clip: text;
 }
 
-.clawcheck-header p {
+.clawscheck-header p {
   color: var(--text-light);
   font-size: 0.95rem;
   font-weight: 300;
   max-width: 500px;
 }
 
-.clawcheck-header::after {
+.clawscheck-header::after {
   content: '';
   display: block;
   width: 60px;
@@ -59,7 +59,7 @@
 }
 
 /* ── Grid ── */
-.clawcheck-grid {
+.clawscheck-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.4rem;
@@ -178,7 +178,7 @@
 }
 
 /* ── Disclaimer ── */
-.clawcheck-disclaimer {
+.clawscheck-disclaimer {
   font-size: 0.78rem;
   color: var(--text-light);
   text-align: center;

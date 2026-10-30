@@ -1,18 +1,18 @@
 import { useState } from 'react';
-import data from '../data/ClawCheck.json';
-import './ClawCheck.css';
+import data from '../data/ClawsCheck.json';
+import './ClawsCheck.css';
 
-export default function ClawCheck() {
+export default function ClawsCheck() {
   const [selected, setSelected] = useState(null);
 
   return (
-    <div className="clawcheck-page">
-      <header className="clawcheck-header">
-        <h1>ClawCheck</h1>
+    <div className="clawscheck-page">
+      <header className="clawscheck-header">
+        <h1>ClawsCheck</h1>
         <p>Learn to recognise common nail conditions and what they may indicate about your health.</p>
       </header>
 
-      <div className="clawcheck-grid">
+      <div className="clawscheck-grid">
         {data.map((item) => (
           <button
             key={item.id}
@@ -44,8 +44,8 @@ export default function ClawCheck() {
       </div>
 
       {/* Disclaimer */}
-      <p className="clawcheck-disclaimer">
-        ⚕️ ClawCheck is for informational purposes only. Always consult a dermatologist for a proper diagnosis.
+      <p className="clawscheck-disclaimer">
+        ⚕️ ClawsCheck is for informational purposes only. Always consult a dermatologist for a proper diagnosis.
       </p>
     </div>
   );
